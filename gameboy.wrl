@@ -1,0 +1,329 @@
+#VRML V2.0 utf8
+
+# The following EXTERNPROTO definitins remain the same for all FVRML scenes.
+
+EXTERNPROTO FGeometry [
+	exposedField SFString definition
+	exposedField MFFloat parameters
+	exposedField MFInt32 resolution
+	exposedField SFVec3f bboxCenter
+	exposedField SFVec3f bboxSize
+	exposedField SFString type
+	exposedField MFNode	parents
+	exposedField SFVec2f timeSpan
+] "http://www3.ntu.edu.sg/home/assourin/FVRML/FVRML.wrl#FGeometry"
+EXTERNPROTO FMaterial [
+	exposedField SFString diffuseColor
+	exposedField SFString type
+	exposedField MFColor patternColor
+	exposedField MFFloat patternKey
+	exposedField SFString ambientIntensity
+	exposedField SFString emissiveColor
+	exposedField SFString shininess
+	exposedField SFString specularColor
+	exposedField SFString transparency
+	exposedField MFFloat parameters
+	exposedField MFNode	parents
+	exposedField SFVec2f timeSpan
+] "http://www3.ntu.edu.sg/home/assourin/FVRML/FVRML.wrl#FMaterial"
+EXTERNPROTO FTexture3D [
+	exposedField SFString definition
+	exposedField SFString type
+	exposedField MFFloat parameters
+	exposedField MFNode	parents
+	exposedField SFVec2f timeSpan
+] "http://www3.ntu.edu.sg/home/assourin/FVRML/FVRML.wrl#FTexture3D"
+EXTERNPROTO FAppearance [
+	exposedField SFNode	material
+	exposedField SFNode	texture
+	exposedField SFNode	textureTransform
+	exposedField SFNode	texture3D
+	exposedField MFNode	parents
+	eventIn	SFBool refresh
+] "http://www3.ntu.edu.sg/home/assourin/FVRML/FVRML.wrl#FAppearance"
+EXTERNPROTO FShape [
+	exposedField SFNode	geometry
+	exposedField SFNode	appearance
+	exposedField SFString polygonizer
+	exposedField MFNode	parents
+	exposedField SFTime	startTime
+	exposedField SFTime stopTime
+    exposedField SFTime cycleInterval
+    exposedField SFBool	loop
+	exposedField SFBool	enabled
+	eventOut SFTime	cycleTime
+	eventIn SFFloat set_fraction
+	field SFInt32 frames
+] "http://www3.ntu.edu.sg/home/assourin/FVRML/FVRML.wrl#FShape"
+EXTERNPROTO FTransform [
+	exposedField SFString operation
+	exposedField SFString type
+	exposedField SFString polygonizer
+	exposedField MFFloat parameters
+	exposedField SFString center
+	exposedField SFString rotation
+	exposedField SFString scale
+	exposedField SFString scaleOrientation
+	exposedField SFString translation
+	exposedField MFNode children
+	exposedField MFNode	parents
+	eventIn	SFBool refresh
+    exposedField SFVec2f timeSpan
+	exposedField SFTime	startTime
+	exposedField SFTime stopTime
+    exposedField SFTime cycleInterval
+    exposedField SFBool	loop
+	exposedField SFBool	enabled
+	eventOut SFTime	cycleTime
+	eventIn SFFloat set_fraction
+	field SFInt32 frames
+] "http://www3.ntu.edu.sg/home/assourin/FVRML/FVRML.wrl#FTransform"
+
+Viewpoint { 
+      position 0 0 6 
+      orientation 0 0 -1 0 
+      description "view all" 
+} 
+
+Background {skyColor 0 0 1}
+
+# External VRML object "coordinate system" is included in the scene
+Inline {url "http://www3.ntu.edu.sg/home/assourin/FVRML/CoordinateAxes.wrl"}
+
+Transform{
+   translation 0 0 0 
+   children[
+      FShape {
+geometry FGeometry {
+
+# Function script defining the CSG solid. 
+# Change to some other formulae to see how the solid geometry changes 
+# based on the parameters domain and the sampling resolution defined below
+	definition "function frep(x,y,z,t){
+
+	box = min(min(min(min(min(x+0.6,0.6-x),y+0.4),1.5-y),z+0.2),0.2-z);
+	elipsoid = min(min((1-(x/0.6)^2-((y+0.4)/0.2)^2),0.2-z),z+0.2);
+	final = max(box,elipsoid);
+	
+	return final;}"
+
+# Adjust the tight bounding box and an optimal resolution
+bboxCenter 0 0 0
+bboxSize 2 4 2
+resolution [100 150 100]
+
+ }  
+appearance FAppearance {
+material FMaterial { 
+# Variable color is defined for the CGS solid
+diffuseColor "r= 0.25; g=0.88; b=0.82;"
+   }    }
+}
+# Displaying the bounding box with a standard Box object of VRML
+# Size of the bounding box goes to size <x y z> while its centre
+# goes to translation <x y z>
+Transform {translation 0 0 0 children [
+	Shape {geometry Box {size 2 4 2}	
+		   appearance Appearance {material Material 
+			   {diffuseColor 0 1 1 transparency 1}}}
+	   ]}
+   ]
+}
+
+Transform{
+   translation 0 0 0 
+   children[
+      FShape {
+geometry FGeometry {
+
+# Function script defining the CSG solid. 
+# Change to some other formulae to see how the solid geometry changes 
+# based on the parameters domain and the sampling resolution defined below
+	definition "function frep(x,y,z,t){
+
+	box = min(min(min(min(min(x+0.5,0.5-x),y-0.6),1.4-y),z+0.2),0.21-z);
+	
+	return box;}"
+
+# Adjust the tight bounding box and an optimal resolution
+bboxCenter 0 0 0
+bboxSize 2 4 2
+resolution [100 150 100]
+
+ }  
+appearance FAppearance {
+material FMaterial { 
+# Variable color is defined for the CGS solid
+diffuseColor "r= 0; g=0; b=0;"
+   }    }
+}
+# Displaying the bounding box with a standard Box object of VRML
+# Size of the bounding box goes to size <x y z> while its centre
+# goes to translation <x y z>
+Transform {translation 0 0 0 children [
+	Shape {geometry Box {size 2 4 2}	
+		   appearance Appearance {material Material 
+			   {diffuseColor 0 1 1 transparency 1}}}
+	   ]}
+   ]
+}
+
+Transform{
+   translation 0 0 0 
+   children[
+      FShape {
+geometry FGeometry {
+
+# Function script defining the CSG solid. 
+# Change to some other formulae to see how the solid geometry changes 
+# based on the parameters domain and the sampling resolution defined below
+	definition "function frep(x,y,z,t){
+
+	box = min(min(min(min(min(x+0.5,-x-0.1),y-0.15),0.3-y),z),0.25-z);
+	box2 = min(min(min(min(min(x+0.38,-x-0.22),y-0.02),0.43-y),z),0.25-z);
+
+	plus = max(box,box2);
+	
+	return plus;}"
+
+# Adjust the tight bounding box and an optimal resolution
+bboxCenter 0 0 0
+bboxSize 2 4 2
+resolution [100 150 100]
+
+ }  
+appearance FAppearance {
+material FMaterial { 
+# Variable color is defined for the CGS solid
+diffuseColor "r= 0; g=0; b=0;"
+   }    }
+}
+# Displaying the bounding box with a standard Box object of VRML
+# Size of the bounding box goes to size <x y z> while its centre
+# goes to translation <x y z>
+Transform {translation 0 0 0 children [
+	Shape {geometry Box {size 2 4 2}	
+		   appearance Appearance {material Material 
+			   {diffuseColor 0 1 1 transparency 1}}}
+	   ]}
+   ]
+}
+
+Transform{
+   translation 0 0 0 
+   children[
+      FShape {
+geometry FGeometry {
+
+# Function script defining the CSG solid. 
+# Change to some other formulae to see how the solid geometry changes 
+# based on the parameters domain and the sampling resolution defined below
+	definition "function frep(x,y,z,t){
+
+	eye1 = min(min(0.07^2-(x-0.15)^2 -(y-0.2)^2,z),0.25-z);
+	eye2 = min(min(0.07^2-(x-0.4)^2 -(y-0.3)^2,z),0.25-z);
+	
+	final = max(eye1,eye2);
+	
+	return final;}"
+
+# Adjust the tight bounding box and an optimal resolution
+bboxCenter 0 0 0
+bboxSize 2 4 2
+resolution [100 150 100]
+
+ }  
+appearance FAppearance {
+material FMaterial { 
+# Variable color is defined for the CGS solid
+diffuseColor "r= 1; g=1; b=1;"
+   }    }
+}
+# Displaying the bounding box with a standard Box object of VRML
+# Size of the bounding box goes to size <x y z> while its centre
+# goes to translation <x y z>
+Transform {translation 0 0 0 children [
+	Shape {geometry Box {size 2 4 2}	
+		   appearance Appearance {material Material 
+			   {diffuseColor 0 1 1 transparency 1}}}
+	   ]}
+   ]
+}
+
+Transform{
+   translation 0 0 0 
+   children[
+      FShape {
+geometry FGeometry {
+
+# Function script defining the CSG solid. 
+# Change to some other formulae to see how the solid geometry changes 
+# based on the parameters domain and the sampling resolution defined below
+	definition "function frep(x,y,z,t){
+
+	startb = min(min((1-((x+0.12)/0.1)^2-((y+0.3)/0.05)^2),0.25-z),z);
+	startb2 = min(min((1-((x-0.12)/0.1)^2-((y+0.3)/0.05)^2),0.25-z),z);
+	final = max(startb,startb2);
+	
+	return final;}"
+
+# Adjust the tight bounding box and an optimal resolution
+bboxCenter 0 0 0
+bboxSize 2 4 2
+resolution [250 250 250]
+
+ }  
+appearance FAppearance {
+material FMaterial { 
+# Variable color is defined for the CGS solid
+diffuseColor "r= 0.8; g=0; b=0;"
+   }    }
+}
+# Displaying the bounding box with a standard Box object of VRML
+# Size of the bounding box goes to size <x y z> while its centre
+# goes to translation <x y z>
+Transform {translation 0 0 0 children [
+	Shape {geometry Box {size 2 4 2}	
+		   appearance Appearance {material Material 
+			   {diffuseColor 0 1 1 transparency 1}}}
+	   ]}
+   ]
+}
+
+Transform{
+   translation 0 0 0 
+   children[
+      FShape {
+geometry FGeometry {
+
+# Function script defining the CSG solid. 
+# Change to some other formulae to see how the solid geometry changes 
+# based on the parameters domain and the sampling resolution defined below
+	definition "function frep(x,y,z,t){
+
+	box = min(min(min(min(min(x+0.5,0.5-x),y-1),1.51-y),z+0.21),0.05-z);
+	
+	return box;}"
+
+# Adjust the tight bounding box and an optimal resolution
+bboxCenter 0 0 0
+bboxSize 2 4 2
+resolution [100 150 100]
+
+ }  
+appearance FAppearance {
+material FMaterial { 
+# Variable color is defined for the CGS solid
+diffuseColor "r= 0.502; g=0.502; b=0.502;"
+   }    }
+}
+# Displaying the bounding box with a standard Box object of VRML
+# Size of the bounding box goes to size <x y z> while its centre
+# goes to translation <x y z>
+Transform {translation 0 0 0 children [
+	Shape {geometry Box {size 2 4 2}	
+		   appearance Appearance {material Material 
+			   {diffuseColor 0 1 1 transparency 1}}}
+	   ]}
+   ]
+}
